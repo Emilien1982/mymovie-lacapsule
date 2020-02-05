@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import { 
   Container,
@@ -7,12 +7,45 @@ import {
   Nav,
   NavItem,
   NavLink,
+  Popover,
+  PopoverHeader,
+  PopoverBody,
+  ListGroup,
+  ListGroupItem,
+  ListGroupItemText,
 
  } from 'reactstrap';
 
 import Movie from './components/Movie'
 
 function App() {
+
+  const [moviesCount,setMoviesCount] = useState(0)
+  const [moviesWishList, setMoviesWishList] = useState([])
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const toggle = () => setPopoverOpen(!popoverOpen);
+
+  var handleClickAddMovie = (name, img) => {
+    setMoviesCount(moviesCount+1)
+    setMoviesWishList([...moviesWishList, {name:name,img:img}])
+  }
+
+  var handleClickDeleteMovie = (name) => {
+    setMoviesCount(moviesCount-1)
+    setMoviesWishList(moviesWishList.filter(object => object.name != name))
+  }
+
+  var cardWish = moviesWishList.map((movie,i) => {
+    return (
+      <ListGroupItem>
+        <ListGroupItemText onClick={() => {handleClickDeleteMovie(movie.name)}}>
+        <img width="25%" src={movie.img} /> {movie.name}
+        </ListGroupItemText>
+      </ListGroupItem>
+    )
+  })
 
   var moviesData = [
     {name:"Star Wars : L'ascension de Skywalker", desc:"La conclusion de la saga Skywalker. De nouvelles légendes vont naître dans cette ...", img:"/starwars.jpg", note:6.7, vote:5},
@@ -24,7 +57,12 @@ function App() {
   ]
 
   var movieList = moviesData.map((movie,i) => {
-    return(<Movie key={i} movieName={movie.name} movieDesc={movie.desc} movieImg={movie.img} globalRating={movie.note} globalCountRating={movie.vote} />)
+    var result = moviesWishList.find(element => element.name == movie.name)
+    var isSee = false
+    if(result != undefined){
+      isSee = true
+    }
+    return(<Movie key={i} movieSee={isSee} handleClickDeleteMovieParent={handleClickDeleteMovie} handleClickAddMovieParent={handleClickAddMovie} movieName={movie.name} movieDesc={movie.desc} movieImg={movie.img} globalRating={movie.note} globalCountRating={movie.vote} />)
   })
 
   return (
@@ -38,7 +76,17 @@ function App() {
             <NavLink style={{color:'white'}}>Last Releases</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink><Button type="button">11 films</Button></NavLink>
+            <NavLink>
+              <Button id="Popover1"  type="button">{moviesCount} films</Button>
+              <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={toggle}>
+                <PopoverHeader>WishList</PopoverHeader>
+                <PopoverBody>
+                <ListGroup>
+                {cardWish}
+                </ListGroup>
+                </PopoverBody>
+              </Popover>
+            </NavLink>
           </NavItem>
         </Nav>
         <Row>

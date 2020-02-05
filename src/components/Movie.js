@@ -17,7 +17,6 @@ import { faHeart, faStar, faVideo} from '@fortawesome/free-solid-svg-icons'
 
 function Movie(props) {
 
-  const [likeMovie, setLikeMovie] = useState(false)
   const [watchMovie, setWatchMovie] = useState(false)
   const [countWatchMovie, setCountWatchMovie] = useState(0)
   const [myRatingMovie, setMyRatingMovie] = useState(0)
@@ -25,6 +24,14 @@ function Movie(props) {
 
   const [rating, setRating] = useState(props.globalRating)
   const [countRating, setCountRating] = useState(props.globalCountRating)
+
+  var changeLiked = (name, img) => {
+    if(props.movieSee == true){
+      props.handleClickDeleteMovieParent(name)
+    } else {
+      props.handleClickAddMovieParent(name, img)
+    }
+  }
 
   var addWatch = () => {
     setWatchMovie(true)
@@ -63,7 +70,6 @@ function Movie(props) {
   }
 
   var avgTotal = Math.round(nbTotalNote / nbTotalVote)
-  console.log(avgTotal)
 
   var tabGlobalRating = []
   for(var i=0;i<10;i++){
@@ -74,7 +80,7 @@ function Movie(props) {
       tabGlobalRating.push(<FontAwesomeIcon style={color} icon={faStar} /> )
   }
 
-  if(likeMovie){
+  if(props.movieSee){
     var colorLike = {color: '#e74c3c',cursor:'pointer'}
   } else {
     var colorLike = {cursor:'pointer'}
@@ -91,7 +97,7 @@ function Movie(props) {
     <Card style={{marginBottom:30}}>
     <CardImg top src={props.movieImg} alt={props.movieName} />
     <CardBody>
-        <p>Like <FontAwesomeIcon style={colorLike} icon={faHeart} onClick={() => setLikeMovie(!likeMovie)} /></p>
+        <p>Like <FontAwesomeIcon style={colorLike} icon={faHeart} onClick={() => changeLiked(props.movieName,props.movieImg)} /></p>
   <p>Nombre de vues  <FontAwesomeIcon style={colorWatch} icon={faVideo} onClick={() => addWatch()} /> <Badge color="secondary">{countWatchMovie}</Badge></p>
         <p>Mon avis 
         {tabRating}
