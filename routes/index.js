@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const request = require('sync-request');
+const request = require('then-request');
 const movieModel = require('../models/movie');
 
 /* GET home page. */
