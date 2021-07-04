@@ -96,42 +96,48 @@ function App() {
 
   const [movieList, setMovieList] = useState([]);
 
+  // get the popular movies from webService
+  const loadPopular = async () => {
+    const rawData = await fetch('/new-movies');
+    //console.log('RAW: ', rawData);
+    if (rawData.status !== 200){
+      console.log('Erreur dans le fetch de la DB: ' + rawData.statusText);
+      return;
+    }
+    const data = await rawData.json();
+    //console.log('DATA: ', data);
+    //console.log('MOVIES: ', data.movies);
+    setMovieList( data.movies.map(
+      ({id, title, overview, backdrop_path, vote_average, vote_count}) => {
+        return {
+          webServiceId: id,
+          name: title,
+          desc: overview.length <= 80? overview : overview.slice(0, 80) + '...',
+          img: backdrop_path? backdrop_path : null,     // il s'agit que du "endpoint", l'url de base est ajouté au niveau du backend sur la route post
+          note: vote_average,
+          vote: vote_count
+        }
+      }
+    ));
+  };
+
+  // get the wishlist from the DB
+  const loadWishlist = async () => {
+    const wishlistRaw = await fetch('/wishlist-movie');
+    const wishlistObj = await wishlistRaw.json();
+    //console.log('WISH: ', wishlistObj.movieList);
+    setWishList(wishlistObj.movieList.map(movie => movie.webServiceId));
+  }
+
   useEffect(() => {
     document.title = "MyMoviz - LaCapsule";
-    // get the popular movies
-    const loadPopular = async () => {
-      const rawData = await fetch('/new-movies');
-      //console.log('RAW: ', rawData);
-      if (rawData.status !== 200){
-        console.log('Erreur dans le fetch de la DB: ' + rawData.statusText);
-        return;
-      }
-      const data = await rawData.json();
-      //console.log('MOVIES: ', data.movies);
-      setMovieList(
-        data.movies.map(
-          ({id, title, overview, backdrop_path, vote_average, vote_count}) => {
-            return {
-              webServiceId: id,
-              name: title,
-              desc: overview.length <= 80? overview : overview.slice(0, 80) + '...',
-              img: backdrop_path? backdrop_path : null,     // il s'agit que du "endpoint", l'url de base est ajouté au niveau du backend sur la route post
-              note: vote_average,
-              vote: vote_count
-            }
-          })
-      )
-    };
-    loadPopular();
 
-    // get the wishlist from the DB
-    const getWishlist = async () => {
-      const wishlistRaw = await fetch('/wishlist-movie');
-      const wishlistObj = await wishlistRaw.json();
-      //console.log('WISH: ', wishlistObj.movieList);
-      setWishList(wishlistObj.movieList.map(movie => movie.webServiceId));
+    // Load popular movies from the webservice and load the wishlist from the Data Base.
+      const rend = async () => {
+      await loadPopular();
+      await loadWishlist();
     }
-    getWishlist();
+    rend();
   }, [])
 //console.log('MOVIELIST: ', movieList);
 //console.log('WISHLIST: ', wishList);
