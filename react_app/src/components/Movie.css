@@ -1,0 +1,12 @@
+
+.badge-secondary {
+  background-color: grey;
+}
+
+.inline {
+  display: inline;
+}
+
+.pointable {
+  cursor: pointer;
+}
