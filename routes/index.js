@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/new-movies', (req, res) => {
-  const rawData = request('GET', 'https://api.themoviedb.org/3/discover/movie?api_key=cbd48301b98fa6677bd78b5fa297c11c&language=fr-FR&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate');
+  const rawData = request('GET', `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.API_KEY}c&language=fr-FR&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate`);
   const data = JSON.parse(rawData.body);
   //console.log('DATA: ', data.results);
   res.json({result: true, movies: data.results});
