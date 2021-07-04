@@ -97,6 +97,7 @@ function App() {
   const [movieList, setMovieList] = useState([]);
 
   useEffect(() => {
+    document.title = "MyMoviz - LaCapsule";
     // get the popular movies
     const loadPopular = async () => {
       const rawData = await fetch('/new-movies');
